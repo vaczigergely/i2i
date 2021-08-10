@@ -1,5 +1,8 @@
+using System;
+using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace l2l.Data.Model
 {
@@ -9,7 +12,19 @@ namespace l2l.Data.Model
         {
             var builder = new DbContextOptionsBuilder<L2lDbContext>();
 
-            builder.UseSqlite("Data Source=l2l.db;");
+            var basePath = Directory.GetCurrentDirectory();
+            var environment = Environment.GetEnvironmentVariable(GlobalStrings.AspnetCoreEnvironment);
+
+            var cbuilder = new ConfigurationBuilder()
+                .SetBasePath(basePath)
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{environment}.json", true)
+                .AddEnvironmentVariables();
+
+            var config = cbuilder.Build();
+            var cn = config.GetConnectionString(GlobalStrings.ConnectionName);
+
+            builder.UseSqlite(cn);
 
             return new L2lDbContext(builder.Options);
         }

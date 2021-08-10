@@ -13,14 +13,24 @@ namespace l2l.Data.Repository
             db = factory.CreateDbContext(new string[] {});
         }
 
-        public void Add(Course entity)
+        public void Add(Course course)
         {
-            db.Courses.Add(entity);
+            db.Courses.Add(course);
         }
 
         public Course GetById(int Id)
         {
             return db.Courses.Find(Id);
+        }
+
+        public void Update(Course course)
+        {
+            db.Courses.Update(course);
+        }
+
+        public void Remove(Course course)
+        {
+            db.Courses.Remove(course);
         }
     }
 }
