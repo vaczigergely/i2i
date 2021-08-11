@@ -1,5 +1,6 @@
 using System;
 using l2l.Data.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace l2l.Data.Tests
 {
@@ -11,7 +12,15 @@ namespace l2l.Data.Tests
         {
             factory = new L2lDbContextFactory();
             var db = GetNewL2lDbContext();
-            db.Database.EnsureCreated();
+
+            if (factory.IsInMemoryDb())
+            {
+              db.Database.EnsureCreated();  
+            }
+            else
+            {
+                db.Database.Migrate();
+            }       
         } 
 
         public L2lDbContext GetNewL2lDbContext()
@@ -22,6 +31,7 @@ namespace l2l.Data.Tests
         public void Dispose()
         {
             var db = GetNewL2lDbContext();
+            factory.Dispose();  
             db.Database.EnsureDeleted();
             db.Dispose();
         }
