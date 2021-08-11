@@ -9,15 +9,13 @@ namespace l2l.Data.Tests
     /// <summary>
     /// CRUD and lists tests
     /// </summary>
-    public class CourseRepositoryTests
+    public class CourseRepositoryTests : IClassFixture<DatabaseFixture>
     {
+        private readonly DatabaseFixture fixture;
 
-        public CourseRepositoryTests()
+        public CourseRepositoryTests(DatabaseFixture fixture)
         {
-            var factory = new L2lDbContextFactory();
-            var db = factory.CreateDbContext(new string[] {});
-
-            db.Database.EnsureCreated();
+            this.fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
         }
 
         [Fact]
@@ -26,7 +24,7 @@ namespace l2l.Data.Tests
             // Arrange
 
             //SUT: System Under Test
-            var sut = new CourseRepository();
+            var sut = new CourseRepository(fixture.GetNewL2lDbContext());
             var course = new Course { Id = 1, Name = "Test Course" };
 
             // Act
@@ -42,7 +40,7 @@ namespace l2l.Data.Tests
         public void CourseRepositoryTests_ExistingCoursesShouldAppearInRepository()
         {
             // Arrange
-            var sut = new CourseRepository();
+            var sut = new CourseRepository(fixture.GetNewL2lDbContext());
             var course = new Course { Id = 1, Name = "Test Course" };
             sut.Add(course);
 
@@ -58,7 +56,7 @@ namespace l2l.Data.Tests
         public void CourseRepositoryTests_ExistingCoursesShouldBeChanged()
         {
             // Arrange
-            var sut = new CourseRepository();
+            var sut = new CourseRepository(fixture.GetNewL2lDbContext());
             var course = new Course { Id = 1, Name = "Test Course" };
             sut.Add(course);
             var toUpdate = sut.GetById(course.Id);
@@ -78,7 +76,7 @@ namespace l2l.Data.Tests
         public void CourseRepositoryTests_ExistingCoursesShouldBeDeleted()
         {
             // Arrange
-            var sut = new CourseRepository();
+            var sut = new CourseRepository(fixture.GetNewL2lDbContext());
             var course = new Course { Id = 1, Name = "Test Course" };
             sut.Add(course);
             

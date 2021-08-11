@@ -13,6 +13,11 @@ namespace l2l.Data.Repository
             db = factory.CreateDbContext(new string[] {});
         }
 
+        public CourseRepository(L2lDbContext db)
+        {
+            this.db = db ?? throw new ArgumentNullException(nameof(db));
+        }
+
         public void Add(Course course)
         {
             db.Courses.Add(course);
